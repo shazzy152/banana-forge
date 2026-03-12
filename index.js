@@ -52,9 +52,15 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // ── Multer ────────────────────────────────────────────────────────────────────
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+    console.log('Created uploads directory');
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/");
+        cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
@@ -75,13 +81,7 @@ const upload = multer({
 });
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.get("/api/health", (req, res) => {
-    res.json({
-        status: "ok",
-        message: "Server is up and running!",
-        timestamp: new Date().toISOString(),
-    });
-});
+app.get("/api/health", (req, res) => res.status(200).json({ status: 'awake' }));
 
 /**
  * POST /api/extract

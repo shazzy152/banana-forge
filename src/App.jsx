@@ -19,6 +19,7 @@ async function fetchWithTimeout(url, options = {}, timeout = 30000) {
 }
 
 function App() {
+    const [isServerAwake, setIsServerAwake] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash");
     const [isLoading, setIsLoading] = useState(false);
@@ -74,6 +75,27 @@ function App() {
 
     const fileInputRef = useRef(null);
     const [modalImage, setModalImage] = useState(null);
+
+    // ── Server health check (Cold-start mitigation) ───────────────────────────
+    useEffect(() => {
+        let isMounted = true;
+        async function checkHealth() {
+            try {
+                const res = await fetch("/api/health");
+                if (res.ok) {
+                    if (isMounted) setIsServerAwake(true);
+                    return;
+                }
+            } catch (err) {
+                // Server hasn't woken up or network error, retry.
+            }
+            if (isMounted && !isServerAwake) {
+                setTimeout(checkHealth, 3000);
+            }
+        }
+        checkHealth();
+        return () => { isMounted = false; };
+    }, [isServerAwake]);
 
     // ── Clipboard paste listener ──────────────────────────────────────────────
     useEffect(() => {
@@ -455,6 +477,24 @@ function App() {
     }
 
     const TOKEN_KEYS = new Set(["inputTokens", "outputTokens", "totalTokens", "costInDollars"]);
+
+    if (!isServerAwake) {
+        return (
+            <div style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "100vh",
+                backgroundColor: "#0f172a",
+                fontFamily: "system-ui, -apple-system, sans-serif"
+            }}>
+                <div className="spinner" style={{ marginBottom: "24px", width: "48px", height: "48px" }} />
+                <h2 style={{ fontSize: "24px", fontWeight: "600", marginBottom: "8px", color: "#e2e8f0" }}>Waking up the BananaForge engine...</h2>
+                <p style={{ fontSize: "14px", color: "#94a3b8" }}>Cold-start on the free tier takes about 30-50 seconds. Hang tight.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="app-shell">
