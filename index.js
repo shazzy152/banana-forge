@@ -97,6 +97,19 @@ app.post("/api/extract", upload.single("image"), async (req, res) => {
     const filePath = req.file.path;
     const model = req.body?.model || "gemini-2.0-flash";
 
+    // Start keep-alive chunked response to bypass Render's 100s timeout
+    res.setHeader("Content-Type", "application/json");
+    res.flushHeaders();
+    const keepAlive = setInterval(() => res.write(" "), 15000);
+    
+    // Override res.json to send exactly the chunked JSON and end the stream
+    res.json = (body) => {
+        clearInterval(keepAlive);
+        res.write(JSON.stringify(body));
+        res.end();
+    };
+    res.status = () => res; // Override status to avoid errors after headers are sent
+
     try {
         // Shared inline image payload reused across both calls.
         const base64Image = fs.readFileSync(filePath).toString("base64");
@@ -220,11 +233,18 @@ app.post("/api/extract", upload.single("image"), async (req, res) => {
  * Response: { success, imageUrl, imagePrompt }
  */
 app.post("/api/generate-industrial", async (req, res) => {
-    res.setTimeout(28000, () => {
-        if (!res.headersSent) {
-            res.status(504).json({ success: false, error: "Model is experiencing high usage — switch to a different image model" });
-        }
-    });
+    // Start keep-alive chunked response to bypass Render's 100s timeout
+    res.setHeader("Content-Type", "application/json");
+    res.flushHeaders();
+    const keepAlive = setInterval(() => res.write(" "), 15000);
+    
+    // Override res.json to send exactly the chunked JSON and end the stream
+    res.json = (body) => {
+        clearInterval(keepAlive);
+        res.write(JSON.stringify(body));
+        res.end();
+    };
+    res.status = () => res; // Override status to avoid errors after headers are sent
 
     const {
         mode = "material",
@@ -292,11 +312,18 @@ app.post("/api/generate-industrial", async (req, res) => {
  * Response: { success, imageUrl, imagePrompt }
  */
 app.post("/api/generate-spatial", async (req, res) => {
-    res.setTimeout(28000, () => {
-        if (!res.headersSent) {
-            res.status(504).json({ success: false, error: "Model is experiencing high usage — switch to a different image model" });
-        }
-    });
+    // Start keep-alive chunked response to bypass Render's 100s timeout
+    res.setHeader("Content-Type", "application/json");
+    res.flushHeaders();
+    const keepAlive = setInterval(() => res.write(" "), 15000);
+    
+    // Override res.json to send exactly the chunked JSON and end the stream
+    res.json = (body) => {
+        clearInterval(keepAlive);
+        res.write(JSON.stringify(body));
+        res.end();
+    };
+    res.status = () => res; // Override status to avoid errors after headers are sent
 
     const {
         spatialMode, targetObject, objectsToRemove,
@@ -385,11 +412,18 @@ app.post("/api/generate-spatial", async (req, res) => {
  * Response: { success, imageUrl, imagePrompt, metrics: { imageCost, modelUsed } }
  */
 app.post("/api/generate-fashion", async (req, res) => {
-    res.setTimeout(28000, () => {
-        if (!res.headersSent) {
-            res.status(504).json({ success: false, error: "Model is experiencing high usage — switch to a different image model" });
-        }
-    });
+    // Start keep-alive chunked response to bypass Render's 100s timeout
+    res.setHeader("Content-Type", "application/json");
+    res.flushHeaders();
+    const keepAlive = setInterval(() => res.write(" "), 15000);
+    
+    // Override res.json to send exactly the chunked JSON and end the stream
+    res.json = (body) => {
+        clearInterval(keepAlive);
+        res.write(JSON.stringify(body));
+        res.end();
+    };
+    res.status = () => res; // Override status to avoid errors after headers are sent
 
     const {
         mode, garment, fabric, pattern,

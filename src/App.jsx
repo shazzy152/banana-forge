@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import "./App.css";
 
 // ── Timeout-aware fetch wrapper ───────────────────────────────────────────────
-async function fetchWithTimeout(url, options = {}, timeout = 30000) {
+async function fetchWithTimeout(url, options = {}, timeout = 300000) { // 5 minutes standard timeout
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
     try {
@@ -10,13 +10,14 @@ async function fetchWithTimeout(url, options = {}, timeout = 30000) {
         return response;
     } catch (err) {
         if (err.name === "AbortError") {
-            throw new Error("Model is experiencing high usage — switch to a different image model");
+            throw new Error("Request timed out. The model is experiencing high load.");
         }
         throw err;
     } finally {
         clearTimeout(timer);
     }
 }
+
 
 function App() {
     const [isServerAwake, setIsServerAwake] = useState(false);
@@ -163,6 +164,12 @@ function App() {
             }
 
             const data = await res.json();
+            
+            if (data.error) {
+                setErrorMessage(data.message || data.error || "Something went wrong");
+                setIsLoading(false);
+                return;
+            }
 
             // ── INDUSTRIAL dynamic category ───────────────────────────────
             if (data.category === "INDUSTRIAL" && data.analysis?.dynamicOptions) {
@@ -294,6 +301,9 @@ function App() {
             }
 
             const data = await res.json();
+            if (data.error || data.success === false) {
+                 throw new Error(data.error || "Fabrication request failed");
+            }
             setFabricateResult(data);
         } catch (err) {
             console.error("Fabricate error:", err.message);
@@ -342,6 +352,9 @@ function App() {
             }
 
             const data = await res.json();
+            if (data.error || data.success === false) {
+                 throw new Error(data.error || "Spatial redesign request failed");
+            }
             setSpatialResult(data);
         } catch (err) {
             console.error("Spatial design error:", err.message);
@@ -404,6 +417,9 @@ function App() {
             }
 
             const data = await res.json();
+            if (data.error || data.success === false) {
+                 throw new Error(data.error || "Fashion design request failed");
+            }
             setFashionResult(data);
         } catch (err) {
             console.error("Fashion design error:", err.message);
