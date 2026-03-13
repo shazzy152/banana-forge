@@ -3,9 +3,6 @@
 **A Multimodal Image-to-Image Transformation Engine**
 *Submitted for the Gemini Live Agent Challenge*
 
-[![Live Demo](https://img.shields.io/badge/Live_Deployment-Render-46E3B7?style=for-the-badge)](https://your-app-name.onrender.com)
-[![Video Walkthrough](https://img.shields.io/badge/Video_Walkthrough-Loom-5522FA?style=for-the-badge)](https://link-to-your-loom-video.com)
-
 ## 📖 Overview
 Banana Forge is a full-stack application that leverages the Gemini Live API to perform highly controlled, domain-specific image-to-image transformations. Moving beyond simple image overlays, Banana Forge computes realistic physical distortion, perspective skew, and environmental lighting to seamlessly integrate flat 2D assets or modify base images within specific physical contexts.
 
@@ -36,14 +33,20 @@ Instead of vague prompts, the Node.js backend compiles strict conditional logic.
 
 If you would like to run Banana Forge locally, follow these steps:
 
-### 1. Clone the Repository
+### Setup instructions
+1. Clone the repository
 ```bash
 git clone https://github.com/shazzy152/banana-forge.git
 cd banana-forge
 
-### 2. Install dependencies
+2. Install dependencies
 npm install
 
-###3. Build and Run
+3. Build and Run
 npm run build
 npm run start
+
+Also, do not forget to update the server/.env file:
+PORT=5000
+GEMINI_API_KEY=your_actual_gemini_api_key_here
+CLIENT_URL=http://localhost:3000
