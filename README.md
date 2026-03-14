@@ -50,3 +50,6 @@ Also, do not forget to update the server/.env file:
 PORT=5000
 GEMINI_API_KEY=your_actual_gemini_api_key_here
 CLIENT_URL=http://localhost:3000
+
+Proof of using Google Cloud services and APIs:
+
