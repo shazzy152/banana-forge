@@ -29,6 +29,14 @@ Instead of vague prompts, the Node.js backend compiles strict conditional logic.
 
 ---
 
+## Proof of using Google Cloud services and APIs:
+
+<video src="https://github.com/user-attachments/assets/2aac4a31-e2d8-41a1-ade0-7384d42fb16e" width="600" controls>
+  Proof of using Google Cloud services and APIs
+</video>
+
+---
+
 ## 🚀 Local Setup & Installation
 
 If you would like to run Banana Forge locally, follow these steps:
@@ -50,6 +58,4 @@ Also, do not forget to update the server/.env file:
 PORT=5000
 GEMINI_API_KEY=your_actual_gemini_api_key_here
 CLIENT_URL=http://localhost:3000
-
-Proof of using Google Cloud services and APIs:
 
